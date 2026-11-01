@@ -13,7 +13,7 @@ typedef struct BmhArray {
     BmhPonteiroQualquer dados; //Array Dos Dados
     size_t t_dados; //Tamanho Que Tipo Dado Possui
     size_t q_dados; //Quantidade De Dados
-    size_t lar; //Tamanho Atual Do Array
+    size_t t_atual; //Tamanho Atual Do Array
 } BmhArray; //Estrutura Que Armazena Lista Com Dados Do Mesmo Tipo
 
 //Definição dos Métodos do Bmh Array
