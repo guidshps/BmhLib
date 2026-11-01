@@ -34,7 +34,7 @@ BmhStatus adicionar_dado_bmh_array(
 
 BmhPonteiroQualquer acessar_endereco_bmh_array(
     BmhArray *array, //Array Destino
-    size_t endereco //Indice Do Dado Que Irá Ser Devolvido
+    size_t indice //Indice Do Dado Que Irá Ser Devolvido
 ); //Acessa Endereço Enviado Pelo Usuário E Devolve Ele
 
 BmhPonteiroQualquer busca_linear_bmh_array(
@@ -56,7 +56,7 @@ BmhStatus ordenacao_rapida_bmh_array(
 
 BmhStatus deletar_dado_bmh_array(
     BmhArray **ptr_array, //Array Destino
-    size_t endereco //Indice Do Dado Que Será Deletado
+    size_t indice //Indice Do Dado Que Será Deletado
 ); //Deleta Dado Indicado Do Array E Corrige As Posições Dos Dados
 
 #endif
