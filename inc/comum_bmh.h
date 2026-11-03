@@ -40,12 +40,18 @@
 typedef enum BmhStatus {
     BMH_OK = 0, BMH_ERRO_AO_ALOCAR = 1, BMH_ESTRUTURA_EXISTE = 2, 
     BMH_ESTRUTURA_N_EXISTE = 3, BMH_ERRO = 4, BMH_USO_INCORRETO = 5
-} BmhStatus; //Retorna Status De Operações Realizadas
+} BmhStatus; //Retorna Status De Operaçõs Realizadas
 
 typedef void * BmhPonteiroQualquer; //Recebe Qualquer Tipo De Ponteiro
 typedef const void * BmhPonteiroQualquerCnst; //Recebe Um Ponteiro Constante
 typedef unsigned char BmhByte; //Variável Que Possui Tamanho De 1 Byte
 
 typedef int(BmhComparador)(BmhPonteiroQualquerCnst, BmhPonteiroQualquerCnst);
+
+BmhStatus atribuir_dado_byte_a_byte(
+    BmhPonteiroQualquer *destino, //Local Que Irá Ser Copiado O Dado 
+    BmhPonteiroQualquer copiado, //Dado Que Irá Ser Copiado
+    size_t t_dado //Tamanho Do Dado Que Irá Ser Copiado Em Bytes
+); //Copia Dado De Um Ponteiro Para O Outro
 
 #endif

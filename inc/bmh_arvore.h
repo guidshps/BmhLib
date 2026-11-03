@@ -6,12 +6,13 @@
 
 typedef struct BmhNoArvore {
     BmhPonteiroQualquer dado; //Dado Do Nó
+    unsigned int qtd_filhos; //Quantidade De Filhos Que Nó Possui
     struct BmhNoArvore *filho_esq; //Filho Onde Fica Elemento Menor
     struct BmhNoArvore *filho_dir; //Filho Onde Fica Elemento Maior
-} BmhNoArvore; //Nó Da Arvore Binária
+} BmhNoArvore;
 
 typedef struct BmhArvore {
-    BmhNoArvore *no_raiz; //Nó Raiz Da Árvore
+    struct BmhNoArvore *no_raiz; //Nó Raiz Da Árvore
     size_t qtd_nos; //Quantidade de Nós Na Árvore
     size_t altura; //Altura Da Árvore
     size_t t_dados; //Tamanho Dos Dados Da Árvore
@@ -27,6 +28,12 @@ BmhStatus criar_bmh_arvore(
 BmhStatus destruir_bmh_arvore(
     BmhArvore **ptr_arvore //Ponteiro Para Árvore Destino
 ); //Destrói Árvore Enviada Pelo Usuário
+
+BmhStatus insercao_ordedana_balanceada_bmh_arvore(
+    BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
+    BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
+    BmhComparador metodo_comparacao //Método Para Comparar Os Dados
+); //Insere Dado De Forma Que A Árvore Fique Balanceada
 
 BmhNoArvore buscar_dado_bmh_arvore(
     BmhArvore *arvore, //Árvore Que Irá Ser Procurado Os Dados
