@@ -236,12 +236,16 @@ static BmhStatus criar_no_filho_para_no(
         return BMH_ERRO_AO_ALOCAR;
     }
 
-    if (metodo_comparacao(dado, (*ptr_no)->dado) > 0 && (*ptr_no)->filho_dir == NULL) 
+    if (metodo_comparacao(dado, (*ptr_no)->dado) > 0 && (*ptr_no)->filho_dir == NULL) {
     //Caso Dado Seja Maior E Não Exista Filho Na Direita
         (*ptr_no)->filho_dir = no_criado; //Nó Filho Direito Recebe Nó Criado
-    else if (metodo_comparacao(dado, (*ptr_no)->dado) < 0 && (*ptr_no)->filho_esq == NULL) 
+        (*ptr_no)->qtd_filhos++; //Conta Filho Já Que Adicionou Nó
+    }
+    else if (metodo_comparacao(dado, (*ptr_no)->dado) < 0 && (*ptr_no)->filho_esq == NULL) {
     //Caso Dado Seja Menor E Não Exista Filho Na Esquerda
         (*ptr_no)->filho_esq = no_criado; //Nó Filho Esquerdo Recebe Nó Criado
+        (*ptr_no)->qtd_filhos++; //Conta Filho Já Que Adicionou Nó
+    }
     else { //Caso Esteja Tentando Sobreescrever Ponteiro
         bmh_log_avisar("Criar Nós Filhos Para Nó: Tentativa De Sobreescrever Filho!");
         return BMH_ERRO;
@@ -474,13 +478,21 @@ BmhStatus insercao_ordedana_balanceada_bmh_arvore(
     Nó Foi Criado Ainda*/
         if (criar_no_raiz_bmh_arvore(ptr_arvore, dado) != BMH_OK) { //Verifica Se Operação Ocorreu Corretamente
             bmh_log_fracasso("Inserção Ordenada Balanceada Bmh Árvore: Erro Ao Criar Nó Raiz");
+            return BMH_ERRO;
         }
 
+        bmh_log_sucesso("Inserção Ordenada Balanceada Bmh Árvore: Sucesso Ao Criar Nó Na Raiz!");
         (*ptr_arvore)->qtd_nos++; //Conta Um Nó Criado
     }
     
     else { //Caso Já Tenha Criado
-        metodo_insercao_ordenada_balanceada(ptr_arvore, dado, metodo_comparacao);
+        if (metodo_insercao_ordenada_balanceada(ptr_arvore, dado, metodo_comparacao) == BMH_OK) {
+            bmh_log_fracasso("Inserção Ordenada Balanceada: Erro Ao Inserir Dado!");
+            return BMH_ERRO;
+        }
+
+        bmh_log_sucesso("Inserção Ordenada Balanceada Bmh Árvore: Sucesso Ao Inserir Dado!");
+        (*ptr_arvore)->qtd_nos++; //Conta Um Nó Criado
     }
 
     bmh_log_sucesso("Inserção Ordenada Balanceada Bmh Árvore: Sucesso Ao Inserir Dado!");
