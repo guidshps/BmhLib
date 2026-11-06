@@ -39,7 +39,8 @@
 
 typedef enum BmhStatus {
     BMH_OK = 0, BMH_ERRO_AO_ALOCAR = 1, BMH_ESTRUTURA_EXISTE = 2, 
-    BMH_ESTRUTURA_N_EXISTE = 3, BMH_ERRO = 4, BMH_USO_INCORRETO = 5
+    BMH_ESTRUTURA_N_EXISTE = 3, BMH_ERRO = 4, BMH_USO_INCORRETO = 5,
+    BMH_FLAG = 6
 } BmhStatus; //Retorna Status De Operaçõs Realizadas
 
 typedef void * BmhPonteiroQualquer; //Recebe Qualquer Tipo De Ponteiro
