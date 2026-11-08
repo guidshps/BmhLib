@@ -1,5 +1,7 @@
 #include "bmh_arvore.h"
 
+//Verificar Balanceamento Dos Nós!
+
 BmhStatus criar_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     size_t t_dados //Tamanho Dos Dados Que Os Nós Irão Guardar
@@ -10,7 +12,7 @@ BmhStatus criar_bmh_arvore(
         return BMH_ESTRUTURA_N_EXISTE;
     } 
     
-    else if (*ptr_arvore == NULL) { //Verifica Se Já Existe Árvore
+    else if (*ptr_arvore != NULL) { //Verifica Se Já Existe Árvore
         bmh_log_fracasso("Criar Bmh Árvore: Uma Árvore Já Existe!");
         return BMH_ESTRUTURA_EXISTE;
     }
@@ -22,7 +24,48 @@ BmhStatus criar_bmh_arvore(
         return BMH_ERRO_AO_ALOCAR;
     }
 
+    (*ptr_arvore)->t_dados = t_dados; //Atribui Tamanho Dos Dados
+
     bmh_log_sucesso("Criar Bmh Árvore: Sucesso Ao Criar A Árvore!");
+    return BMH_OK;
+}
+
+void destruir_sub_arvore(
+    BmhNoArvore *no //Nó Base Que Será Usado
+) //Destói Sub-Árvore Da Árvore 
+{
+    if (!no) return;
+
+
+    //Verifica Se Filhos Existem Para Destruílos
+    if (no->filho_esq != NULL) destruir_sub_arvore(no->filho_esq);
+    if (no->filho_dir != NULL) destruir_sub_arvore(no->filho_dir);
+
+    free(no->dado); //Libera Dado
+    free(no); //Libera Nó
+
+    return;
+}
+
+BmhStatus destruir_bmh_arvore(
+    BmhArvore **ptr_arvore //Ponteiro Para Árvore Destino
+) //Destrói Árvore Enviada Pelo Usuário
+{
+    if(!ptr_arvore) { //Verifica Se Ponteiro É Válido
+        bmh_log_fracasso("Destruir Bmh Árvore: Este Ponteiro Não Existe!");
+        return BMH_USO_INCORRETO;
+    }
+
+    else if (!(*ptr_arvore)) { //Verifica Se Existe Árvore
+        bmh_log_fracasso("Destruir Bmh Árvore: Esta Árvore Não Existe!");
+        return BMH_USO_INCORRETO;
+    }
+
+    destruir_sub_arvore((*ptr_arvore)->no_raiz); //Destrói Árvore Em Si
+    bmh_free(*ptr_arvore); //Destrói Estruturas De Dados Da Árvore
+    (*ptr_arvore) = NULL; //Recebe Como Que Árvore Não Existe 
+
+    bmh_log_sucesso("Destruir Bmh Árvore: Sucesso Ao Destruir Árvore!");
     return BMH_OK;
 }
 
@@ -187,14 +230,17 @@ static BmhStatus balancear_no(
 
     prox_no->filho_esq = prox_no->filho_dir = NULL; //Limpa Filhos Do Próximo Nó
     prox_prox_no->filho_esq = prox_prox_no->filho_dir = NULL; //Limpa Filhos Do Nó Filho Do Próximo Nó
-
+    prox_no->qtd_filhos = 0; //Zera Quantidade De Filhos
+    prox_prox_no->qtd_filhos = 0; //Zera Quantidade De Filhos
+    
     (*ptr_no_base)->dado = dado_medio; //Recebe Dado Médio
     prox_no->dado = dado_menor; //Recebe Menor Dado
-    prox_prox_no = dado_maior; //Recebe Dado Maior
+    prox_prox_no->dado = dado_maior; //Recebe Dado Maior
 
     //Atribuição De Nova Referência
     (*ptr_no_base)->filho_esq = prox_no;
     (*ptr_no_base)->filho_dir = prox_prox_no;
+    (*ptr_no_base)->qtd_filhos = 2; //Atualiza Qtd De Filhos
 
     bmh_log_sucesso("Balancear Nó: Sucesso Ao Balancear Nó!");
     return BMH_OK;
@@ -226,6 +272,11 @@ static BmhStatus criar_no_filho_para_no(
 
     else if (!metodo_comparacao) { //Verifica Se Existe Método De Comparação
         bmh_log_fracasso("Criar Nós Filhos Para Nó: Este Método de Comparação É Inválido!");
+        return BMH_USO_INCORRETO;
+    }
+
+    else if (t_dado == 0) {
+        bmh_log_avisar("Criar Nós Filhos Para Nó: O Tamanho Do Dado Passado Foi 0!");
         return BMH_USO_INCORRETO;
     }
 
@@ -417,7 +468,7 @@ static BmhStatus metodo_insercao_ordenada_balanceada(
         if (no_atual->qtd_filhos == 0) { //Caso Nó Não Possua Filhos
             if (criar_no_filho_para_no(&no_atual, dado, (*ptr_arvore)->t_dados,
             metodo_comparacao) != BMH_OK) { //Tenta Criar Nó Filho E Verifica
-                bmh_log_fracasso("Método Inserção Ordenada: Erro Em Criar Nó Filho Para Nó!");
+                bmh_log_fracasso("Método Inserção Ordenada Balanceada: Erro Em Criar Nó Filho Para Nó!");
                 return BMH_ERRO; //Retorna Erro
             }
             (*ptr_arvore)->qtd_nos++; //Incrementa Já Que Conseguiu Adicionar
@@ -425,13 +476,13 @@ static BmhStatus metodo_insercao_ordenada_balanceada(
         }
 
         else if (no_atual->qtd_filhos == 1) { //Caso Possua Um Filho
-            if (caso_no_possua_1_filho_insercao_ordenada(no_atual,
+            if (caso_no_possua_1_filho_insercao_ordenada(&no_atual,
             dado, (*ptr_arvore)->t_dados, metodo_comparacao) == BMH_FLAG) {
                 break; //Sai Do Loop Caso Consiga Inserir
             }
 
             else {
-                bmh_log_fracasso("Método Inserção Ordenada: Erro No Caso Nó Atual Possua 1 Filho!");
+                bmh_log_fracasso("Método Inserção Ordenada Balanceada: Erro No Caso Nó Atual Possua 1 Filho!");
                 return BMH_ERRO;
             }
         }
@@ -486,12 +537,12 @@ BmhStatus insercao_ordedana_balanceada_bmh_arvore(
     }
     
     else { //Caso Já Tenha Criado
-        if (metodo_insercao_ordenada_balanceada(ptr_arvore, dado, metodo_comparacao) == BMH_OK) {
-            bmh_log_fracasso("Inserção Ordenada Balanceada: Erro Ao Inserir Dado!");
+        if (metodo_insercao_ordenada_balanceada(ptr_arvore, dado, metodo_comparacao) != BMH_OK) {
+            bmh_log_fracasso("Inserção Ordenada Balanceada Bmh Árvore: Erro Ao Inserir Dado!");
             return BMH_ERRO;
         }
 
-        bmh_log_sucesso("Inserção Ordenada Balanceada Bmh Árvore: Sucesso Ao Inserir Dado!");
+        bmh_log_sucesso("Inserção Ordenada Balanceada Bmh Árvore: Sucesso Ao Inserir Dado Fora Da Raiz!");
         (*ptr_arvore)->qtd_nos++; //Conta Um Nó Criado
     }
 

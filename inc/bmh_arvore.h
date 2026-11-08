@@ -6,9 +6,9 @@
 
 typedef struct BmhNoArvore {
     BmhPonteiroQualquer dado; //Dado Do Nó
-    unsigned int qtd_filhos; //Quantidade De Filhos Que Nó Possui
     struct BmhNoArvore *filho_esq; //Filho Onde Fica Elemento Menor
     struct BmhNoArvore *filho_dir; //Filho Onde Fica Elemento Maior
+    unsigned int qtd_filhos; //Quantidade De Filhos Que Nó Possui
 } BmhNoArvore;
 
 typedef struct BmhArvore {
@@ -24,6 +24,10 @@ BmhStatus criar_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     size_t t_dados //Tamanho Dos Dados Que Os Nós Irão Guardar
 ); //Cria Árvore Que Possui Dados Com Tamanho De Dados Especificado
+
+void destruir_sub_arvore(
+    BmhNoArvore *no //Nó Base Que Será Usado
+); //Destrói Sub-Árvore Da Árvore
 
 BmhStatus destruir_bmh_arvore(
     BmhArvore **ptr_arvore //Ponteiro Para Árvore Destino

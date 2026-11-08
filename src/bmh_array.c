@@ -36,13 +36,12 @@ BmhStatus destruir_bmh_array(
     BmhArray **ptr_array //Ponteiro Para O Array Destino
 ) //Destroí Bmh Array
 {
-
-    if (ptr_array == NULL) {
+    if (ptr_array == NULL) { //Verifica Se Ponteiro Existe
         bmh_log_fracasso("Destruir Bmh Array: Este Ponteiro Não Existe!");
         return BMH_ESTRUTURA_N_EXISTE;
     }
 
-    else if (*ptr_array == NULL) { //Verifica Se Ponteiro Exsite
+    else if (*ptr_array == NULL) { //Verifica Se Array Existe
         bmh_log_fracasso("Destruir Bmh Array: Este Array Não Existe!");
         return BMH_USO_INCORRETO;
     }

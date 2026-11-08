@@ -30,6 +30,6 @@ BmhStatus atribuir_dado_byte_a_byte(
         ptr_destino[i] = ptr_copiado[i]; //Realiza Passagem Dos Dados
     }
 
-    bmh_log_fracasso("Atribuir Dado Byte a Byte: A Passagem Dos Dados Foi Feito Corretamente!");
+    bmh_log_sucesso("Atribuir Dado Byte a Byte: A Passagem Dos Dados Foi Feito Corretamente!");
     return BMH_OK;
 }

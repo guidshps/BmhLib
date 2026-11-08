@@ -1,5 +1,5 @@
-#ifndef ESTRUTURAS_BMH_H
-#define ESTRUTURAS_BMH_H
+#ifndef BMHLIB_H
+#define BMHLIB_H
 #pragma once
 
 #include "comum_bmh.h"
