@@ -1,7 +1,5 @@
 #include "bmh_arvore.h"
 
-//Verificar Balanceamento Dos Nós!
-
 BmhStatus criar_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     size_t t_dados //Tamanho Dos Dados Que Os Nós Irão Guardar
@@ -388,32 +386,32 @@ static BmhStatus caso_no_possua_1_filho_insercao_ordenada (
                 bmh_log_sucesso("Caso Nó Possua 1 Filho Inserção Ordenada: Sucesso Ao Inserir Novo Filho!");
                 return BMH_FLAG; 
             }
+        }
 
-            else { // Caso Dado Deve Ser Inserido Na Mesma Direção Deve-se Balancear
-                if (criar_no_filho_para_no(&prox_no, dado, t_dado, metodo_comparacao) == BMH_OK) {
-                    if (balancear_no(ptr_no, metodo_comparacao) == BMH_OK) { //Caso Consiga Balancear Nó
-                        bmh_log_sucesso("Caso Nó Possua 1 Filho Inserção Ordenada: Sucesso Ao Balancear!");
-                        return BMH_FLAG; //Retorna Flag
-                    }
-
-                    else {
-                        if (prox_no->filho_dir != NULL) {
-                            free(prox_no->filho_dir); //Libera Já Que Não Conseguiu Balancear
-                            prox_no->filho_dir = NULL; //Indica Que Está Vázio
-                        }
-                        else if (prox_no->filho_esq != NULL) {
-                            free(prox_no->filho_esq); //Libera Já Que Não Conseguiu Balancear
-                            prox_no->filho_esq = NULL; //Indica Que Está Vázio
-                        }
-                        bmh_log_fracasso("Caso Nó Possua 1 Filho Inserção Ordenada: Fracasso Ao Balancear!");
-                        return BMH_ERRO;
-                    }
+        else { // Caso Dado Deve Ser Inserido Na Mesma Direção Deve-se Balancear
+            if (criar_no_filho_para_no(&prox_no, dado, t_dado, metodo_comparacao) == BMH_OK) {
+                if (balancear_no(ptr_no, metodo_comparacao) == BMH_OK) { //Caso Consiga Balancear Nó
+                    bmh_log_sucesso("Caso Nó Possua 1 Filho Inserção Ordenada: Sucesso Ao Balancear!");
+                    return BMH_FLAG; //Retorna Flag
                 }
 
-                else { //Caso Não Consiga Criar Nenhum Nó Filho Para O Próximo Nó
-                    bmh_log_fracasso("Caso Nó Possua 1 Filho Inserção Ordenada: Erro Criar Nó Filho! (Caso Que Dados Estão Em Série)");
+                else {
+                    if (prox_no->filho_dir != NULL) {
+                        free(prox_no->filho_dir); //Libera Já Que Não Conseguiu Balancear
+                        prox_no->filho_dir = NULL; //Indica Que Está Vázio
+                    }
+                    else if (prox_no->filho_esq != NULL) {
+                        free(prox_no->filho_esq); //Libera Já Que Não Conseguiu Balancear
+                        prox_no->filho_esq = NULL; //Indica Que Está Vázio
+                    }
+                    bmh_log_fracasso("Caso Nó Possua 1 Filho Inserção Ordenada: Fracasso Ao Balancear!");
                     return BMH_ERRO;
                 }
+            }
+
+            else { //Caso Não Consiga Criar Nenhum Nó Filho Para O Próximo Nó
+                bmh_log_fracasso("Caso Nó Possua 1 Filho Inserção Ordenada: Erro Criar Nó Filho! (Caso Que Dados Estão Em Série)");
+                return BMH_ERRO;
             }
         }
     }
@@ -423,8 +421,8 @@ static BmhStatus caso_no_possua_1_filho_insercao_ordenada (
         return BMH_ERRO;
     }
 
-    bmh_log_sucesso("Caso Nó Possua 1 Filho Inserção Ordenada: Passagem Ocorreu Corretamente!");
-    return BMH_OK;
+    bmh_log_fracasso("Caso Nó Possua 1 Filho Inserção Ordenada: Comportamento Inesperado!");
+    return BMH_ERRO;
 }
 
 static BmhStatus metodo_insercao_ordenada_balanceada(

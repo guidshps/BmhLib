@@ -43,6 +43,6 @@ BmhNoArvore buscar_dado_bmh_arvore(
     BmhArvore *arvore, //Árvore Que Irá Ser Procurado Os Dados
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Procurado
     BmhComparador metodo_comparacao //Metódo Para Comparar Dados
-); //Busca Dado Na Árvore E Devolve Endereço
+); //Busca Dado Na Árvore E Devolve Nó Que Foi Achado
 
 #endif
