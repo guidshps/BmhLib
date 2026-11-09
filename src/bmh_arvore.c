@@ -469,7 +469,6 @@ static BmhStatus metodo_insercao_ordenada_balanceada(
                 bmh_log_fracasso("Método Inserção Ordenada Balanceada: Erro Em Criar Nó Filho Para Nó!");
                 return BMH_ERRO; //Retorna Erro
             }
-            (*ptr_arvore)->qtd_nos++; //Incrementa Já Que Conseguiu Adicionar
             break; //Sai Do Loop Caso Consiga Inserir
         }
 
@@ -497,7 +496,7 @@ static BmhStatus metodo_insercao_ordenada_balanceada(
     return BMH_OK;
 }
 
-BmhStatus insercao_ordedana_balanceada_bmh_arvore(
+BmhStatus insercao_ordenada_balanceada_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
     BmhComparador metodo_comparacao //Método Para Comparar Os Dados

@@ -33,7 +33,7 @@ BmhStatus destruir_bmh_arvore(
     BmhArvore **ptr_arvore //Ponteiro Para Árvore Destino
 ); //Destrói Árvore Enviada Pelo Usuário
 
-BmhStatus insercao_ordedana_balanceada_bmh_arvore(
+BmhStatus insercao_ordenana_balanceada_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
     BmhComparador metodo_comparacao //Método Para Comparar Os Dados
