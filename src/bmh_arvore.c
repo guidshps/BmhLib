@@ -697,6 +697,7 @@ BmhNoArvore *buscar_dado_bmh_arvore(
         }
     }
 
+    //Impossível Chegar Aqui
     bmh_log_fracasso("Buscar Dado Bmh Árvore: Comportamento Inesperado!");
     return NULL; //Retorna Nulo, Pois Teve Comportamento Não Esperado
 }
