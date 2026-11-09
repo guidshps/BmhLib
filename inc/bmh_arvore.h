@@ -26,23 +26,27 @@ BmhStatus criar_bmh_arvore(
 ); //Cria Árvore Que Possui Dados Com Tamanho De Dados Especificado
 
 void destruir_sub_arvore(
-    BmhNoArvore *no //Nó Base Que Será Usado
+    BmhNoArvore *no, //Nó Base Que Será Usado
+    BmhDestruidor metodo_destruicao //Método Para Destruir Dados Do Ponteiro
 ); //Destrói Sub-Árvore Da Árvore
 
 BmhStatus destruir_bmh_arvore(
-    BmhArvore **ptr_arvore //Ponteiro Para Árvore Destino
+    BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
+    BmhDestruidor metodo_destruicao //Método Para Destruir Dados Do Ponteiro
 ); //Destrói Árvore Enviada Pelo Usuário
 
-BmhStatus insercao_ordenana_balanceada_bmh_arvore(
+BmhStatus insercao_ordenada_balanceada_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
-    BmhComparador metodo_comparacao //Método Para Comparar Os Dados
+    BmhComparador metodo_comparacao, //Método Para Comparar Os Dados
+    BmhDestruidor metodo_destruicao //Método Para Destroir Dados
 ); //Insere Dado De Forma Que A Árvore Fique Balanceada
 
 BmhStatus insercao_ordenada_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
-    BmhComparador metodo_comparacao //Método Para Comparar Os Dado
+    BmhComparador metodo_comparacao, //Método Para Comparar Os Dado
+    BmhDestruidor metodo_destruicao //Método Para Destroir Dados
 ); //Insere Dado De Forma Ordenada, Mas Não Balanceia Árvore
 
 BmhNoArvore *buscar_dado_bmh_arvore(
