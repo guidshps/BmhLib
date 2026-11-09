@@ -547,3 +547,156 @@ BmhStatus insercao_ordedana_balanceada_bmh_arvore(
     bmh_log_sucesso("Inserção Ordenada Balanceada Bmh Árvore: Sucesso Ao Inserir Dado!");
     return BMH_OK;
 }
+
+BmhStatus insercao_ordenada_bmh_arvore(
+    BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
+    BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
+    BmhComparador metodo_comparacao //Método Para Comparar Os Dado
+) //Insere Dado De Forma Ordenada, Mas Não Balanceia Árvore
+{
+    BmhNoArvore *no_atual = NULL; //Variável Auxiliar Para Navegar Na Árore
+
+    if (!ptr_arvore) { //Verifica Se Ponteiro É Válido
+        bmh_log_fracasso("Inserção Ordenada Bmh Árvore: Este Ponteiro Não Existe!");
+        return BMH_ESTRUTURA_N_EXISTE;
+    }
+
+    else if (!(*ptr_arvore)) { //Verifica Se Existe Árvore
+        bmh_log_fracasso("Inserção Ordenada Bmh Árvore: Esta Árvore Não Existe!");
+        return BMH_ESTRUTURA_N_EXISTE;
+    }
+
+    else if (!dado) { //Verifica Se Dado Existe
+        bmh_log_fracasso("Inserção Ordenada Bmh Árvore: Este Dado Não Existe!");
+        return BMH_ESTRUTURA_N_EXISTE;
+    }
+
+    else if (!metodo_comparacao) { //Verifica Se Método De Comaparação É Válido
+        bmh_log_fracasso("Inserção Ordenada Bmh Árvore: Este Método De Comparação Não É Válido!");
+        return BMH_ESTRUTURA_N_EXISTE;
+    }
+    
+    //Métodos De Inserção Efetivos Realmente
+
+    //Caso Árvore Não Possua Raiz E Nenhum Nó
+    if ((*ptr_arvore)->no_raiz == NULL && (*ptr_arvore)->qtd_nos == 0) {
+        //Tenta Criar Nó Para Dado
+        (*ptr_arvore)->no_raiz = criar_bmh_no_arvore(dado, NULL, NULL, (*ptr_arvore)->t_dados);
+
+        if ((*ptr_arvore)->no_raiz != NULL) { //Verifica Se Conseguiu Criar Nó
+            bmh_log_sucesso("Inserção Ordenada Bmh Árvore: Sucesso Ao Inserir Dado Na Raiz!");
+            (*ptr_arvore)->qtd_nos++; //Conta Um Nó, Pois Adicionou
+            return BMH_OK; 
+        }
+
+        else { //Caso Não Conseguiu Criar Nó
+            bmh_log_sucesso("Inserção Ordenada Bmh Árvore: Erro Ao Criar Dado Na Raiz!");
+            return BMH_ERRO_AO_ALOCAR;
+        }
+    }
+    
+    else if ((*ptr_arvore)->no_raiz != NULL && (*ptr_arvore)->qtd_nos != 0) {
+        no_atual = (*ptr_arvore)->no_raiz; //Define Referência Como A Raiz Para Navegar
+
+        while (true) {
+            if (metodo_comparacao(dado, no_atual->dado) > 0) { //Se Dado É Maior Que Dado Do Nó
+                if (no_atual->filho_dir == NULL) { //Caso Não Exista Filho Que Tenha Dado Maior
+                    if (criar_no_filho_para_no(&no_atual, dado, (*ptr_arvore)->t_dados,
+                    metodo_comparacao) == BMH_OK) { //Tenta Criar Filho Para Nó Atual
+                        bmh_log_sucesso("Inserção Ordenada Bmh Árvore: Sucesso Ao Criar Nó Filho Para Nó Atual!");
+                        return BMH_OK;
+                    }
+
+                    else { //Caso Não Consiga Criar
+                        bmh_log_fracasso("Inserção Ordenada Bmh Árvore: Erro Ao Criar Nó Filho Para Nó Atual!");
+                        return BMH_ERRO;;
+                    }
+                }
+                else no_atual = no_atual->filho_dir; //Passa Para Lado Direto Caso Exista
+            }
+
+            else {
+                if (no_atual->filho_esq == NULL) { //Caso Não Exista Filho Que Tenha Dado Menor
+                    if (criar_no_filho_para_no(&no_atual, dado, (*ptr_arvore)->t_dados,
+                    metodo_comparacao) == BMH_OK) { //Tenta Criar Filho Para Nó Atual
+                        bmh_log_sucesso("Inserção Ordenada Bmh Árvore: Sucesso Ao Criar Nó Filho Para Nó Atual!");
+                        return BMH_OK;
+                    }
+
+                    else { //Caso Não Consiga Criar
+                        bmh_log_fracasso("Inserção Ordenada Bmh Árvore: Erro Ao Criar Nó Filho Para Nó Atual!");
+                        return BMH_ERRO;
+                    }
+                }
+                else no_atual = no_atual->filho_esq; //Passa Para Lado Direto Caso Exista
+            }
+        }
+    }
+
+    bmh_log_fracasso("Inserção Ordenada Bmh Árvore: Comportamento Inesperado Ou Árvore Foi Corrompida!");
+    return BMH_ERRO;
+}
+
+BmhNoArvore *buscar_dado_bmh_arvore(
+    BmhArvore *arvore, //Árvore Que Irá Ser Procurado Os Dados
+    BmhPonteiroQualquer dado, //Dado Que Irá Ser Procurado
+    BmhComparador metodo_comparacao //Metódo Para Comparar Dados
+) //Busca Dado Na Árvore E Devolve Nó Que Foi Achado
+{
+    BmhNoArvore *no_atual = NULL; //Nó Usado Para Navegar Na Árvore
+
+    if (!arvore) { //Verifica Se Existe Árvore
+        bmh_log_fracasso("Buscar Dado Bmh Árvore: Esta Árvore Não Existe!");
+        return NULL; //Retorna Nulo, Pois Não Foi Feito A Operação
+    }
+
+    else if (!dado) { //Verifica Se Dado É Válido
+        bmh_log_fracasso("Buscar Dado Bmh Árvore: Este Dado Não Existe!");
+        return NULL; //Retorna Nulo, Pois Não Foi Feito A Operação
+    }
+
+    else if (!metodo_comparacao) { //Verifica Se Existe Método De Comparação
+        bmh_log_fracasso("Buscar Dado Bmh Árvore: Este Método De Comparação É Inválido!");
+        return NULL; //Retorna Nulo, Pois Não Foi Feito A Operação
+    }
+
+    //Busca do Dado Efetiva
+
+    if (arvore->qtd_nos == 0 || !arvore->no_raiz) { //Verifica Se Árvore É Hábil Para Busca
+        bmh_log_avisar("Buscar Dado Bmh Árvore: Esta Árvore Não Possui Nós Ou Não Possui Raiz!");
+        return NULL; //Retorna Nulo, Pois Não Foi Feito A Operação
+    }
+
+
+    else {
+        no_atual = arvore->no_raiz; //Define Nó Raiz Para Começar A Busca
+
+        while (true) {
+            if (metodo_comparacao(dado, no_atual->dado) == 0) { //Se Dados São Iguais
+                bmh_log_sucesso("Buscar Dado Bmh Árvore: Sucesso Ao Procurar Dado!");
+                return no_atual;
+            }
+
+            else if (metodo_comparacao(dado, no_atual->dado) > 0) { //Se Dado É Maior Que Dado Do Nó
+                if (no_atual->filho_dir == NULL) { //Verifica Se Existe Dados Maiores
+                    bmh_log_fracasso("Buscar Dado Bmh Árvore: Não Existe Esse Dado Na Árvore!");
+                    return NULL; //Retorna Nulo, Já Que Não Achou Dado
+                }
+                
+                else no_atual = no_atual->filho_dir; //Passa Para Próximo Para Continuar A Busca
+            }
+
+            else if (metodo_comparacao(dado, no_atual->dado) <= 0) { //Se Dado É Menor Ou Igual Que Dado Do Nó
+                if (no_atual->filho_esq == NULL) { //Verifica Se Existe Dados Maiores
+                    bmh_log_fracasso("Buscar Dado Bmh Árvore: Não Existe Esse Dado Na Árvore!");
+                    return NULL; //Retorna Nulo, Já Que Não Achou Dado
+                }
+                
+                else no_atual = no_atual->filho_esq; //Passa Para Próximo Para Continuar A Busca
+            }
+        }
+    }
+
+    bmh_log_fracasso("Buscar Dado Bmh Árvore: Comportamento Inesperado!");
+    return NULL; //Retorna Nulo, Pois Teve Comportamento Não Esperado
+}

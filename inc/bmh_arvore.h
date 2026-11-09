@@ -39,7 +39,13 @@ BmhStatus insercao_ordedana_balanceada_bmh_arvore(
     BmhComparador metodo_comparacao //Método Para Comparar Os Dados
 ); //Insere Dado De Forma Que A Árvore Fique Balanceada
 
-BmhNoArvore buscar_dado_bmh_arvore(
+BmhStatus insercao_ordenada_bmh_arvore(
+    BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
+    BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
+    BmhComparador metodo_comparacao //Método Para Comparar Os Dado
+); //Insere Dado De Forma Ordenada, Mas Não Balanceia Árvore
+
+BmhNoArvore *buscar_dado_bmh_arvore(
     BmhArvore *arvore, //Árvore Que Irá Ser Procurado Os Dados
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Procurado
     BmhComparador metodo_comparacao //Metódo Para Comparar Dados
