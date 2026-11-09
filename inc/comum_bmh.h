@@ -48,6 +48,7 @@ typedef const void * BmhPonteiroQualquerCnst; //Recebe Um Ponteiro Constante
 typedef unsigned char BmhByte; //Variável Que Possui Tamanho De 1 Byte
 
 typedef int(BmhComparador)(BmhPonteiroQualquerCnst, BmhPonteiroQualquerCnst);
+typedef void(BmhDestruidor)(BmhPonteiroQualquer); 
 
 BmhStatus atribuir_dado_byte_a_byte(
     BmhPonteiroQualquer *destino, //Local Que Irá Ser Copiado O Dado 

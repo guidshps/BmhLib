@@ -29,24 +29,26 @@ BmhStatus criar_bmh_arvore(
 }
 
 void destruir_sub_arvore(
-    BmhNoArvore *no //Nó Base Que Será Usado
+    BmhNoArvore *no, //Nó Base Que Será Usado
+    BmhDestruidor metodo_destruicao //Método Para Destruir Dados Do Ponteiro
 ) //Destói Sub-Árvore Da Árvore 
 {
     if (!no) return;
 
-
     //Verifica Se Filhos Existem Para Destruílos
-    if (no->filho_esq != NULL) destruir_sub_arvore(no->filho_esq);
-    if (no->filho_dir != NULL) destruir_sub_arvore(no->filho_dir);
+    if (no->filho_esq != NULL) destruir_sub_arvore(no->filho_esq, metodo_destruicao);
+    if (no->filho_dir != NULL) destruir_sub_arvore(no->filho_dir, metodo_destruicao);
 
-    free(no->dado); //Libera Dado
+    if (metodo_destruicao != NULL) metodo_destruicao(no->dado);
+    else free(no->dado); //Libera Dado
     free(no); //Libera Nó
 
     return;
 }
 
 BmhStatus destruir_bmh_arvore(
-    BmhArvore **ptr_arvore //Ponteiro Para Árvore Destino
+    BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
+    BmhDestruidor metodo_destruicao //Método Para Destruir Dados Do Ponteiro
 ) //Destrói Árvore Enviada Pelo Usuário
 {
     if(!ptr_arvore) { //Verifica Se Ponteiro É Válido
@@ -59,7 +61,7 @@ BmhStatus destruir_bmh_arvore(
         return BMH_USO_INCORRETO;
     }
 
-    destruir_sub_arvore((*ptr_arvore)->no_raiz); //Destrói Árvore Em Si
+    destruir_sub_arvore((*ptr_arvore)->no_raiz, metodo_destruicao); //Destrói Árvore Em Si
     bmh_free(*ptr_arvore); //Destrói Estruturas De Dados Da Árvore
     (*ptr_arvore) = NULL; //Recebe Como Que Árvore Não Existe 
 
@@ -248,7 +250,8 @@ static BmhStatus criar_no_filho_para_no(
     BmhNoArvore **ptr_no, //Ponteiro Para Nó Base
     BmhPonteiroQualquer dado, //Dado Que Será Atribuido No Novo Ponteiro
     size_t t_dado, //Tamanho Do Dado Que Irá Ser Atribuido
-    BmhComparador metodo_comparacao //Método De Comparação Dos Dados
+    BmhComparador metodo_comparacao, //Método De Comparação Dos Dados
+    BmhDestruidor metodo_destruicao //Método Para Destruição De Dados
 ) //Cria Nó Filho Para Um Nó Caso Este Não Possua
 {
     BmhNoArvore *no_criado = NULL; //Nó Que Será Criado
@@ -297,6 +300,10 @@ static BmhStatus criar_no_filho_para_no(
     }
     else { //Caso Esteja Tentando Sobreescrever Ponteiro
         bmh_log_avisar("Criar Nós Filhos Para Nó: Tentativa De Sobreescrever Filho!");
+        //Libera Dados Copiados
+        if (metodo_destruicao) metodo_destruicao(no_criado->dado);
+        else free(no_criado->dado);
+        free(no_criado); //Libera Nó Que Foi Criado, Pois Não Irá Mais Ser Usado
         return BMH_ERRO;
     }
 
@@ -308,7 +315,8 @@ static BmhStatus caso_no_possua_1_filho_insercao_ordenada (
     BmhNoArvore **ptr_no, //Ponteiro Para Nó Base
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Comparado Ou Atribuido
     size_t t_dado, //Tamanho Do Dado Que Irá Ser Atribuido
-    BmhComparador metodo_comparacao //Método De Comparação Dos Dados
+    BmhComparador metodo_comparacao, //Método De Comparação Dos Dados
+    BmhDestruidor metodo_destruicao //Método Para Realizar Destruição Dos Dados
 ) //Caso Que Nó Possui Apenas 1 Filho Na Inserção Ordenada 
 {
     BmhNoArvore *prox_no = NULL; //Ponteiro Para Próximo Nó Em Relação À Base
@@ -338,7 +346,7 @@ static BmhStatus caso_no_possua_1_filho_insercao_ordenada (
 
         if (metodo_comparacao(dado, (*ptr_no)->dado) <= 0) { /*Caso Dado Seja Menor Ou Igual E 
         Exista Apenas Filho Na Direita*/
-            if (criar_no_filho_para_no(ptr_no, dado, t_dado, metodo_comparacao) == BMH_OK) {
+            if (criar_no_filho_para_no(ptr_no, dado, t_dado, metodo_comparacao, metodo_destruicao) == BMH_OK) {
                 bmh_log_sucesso("Caso Nó Possua 1 Filho Inserção Ordenada: Sucesso Ao Inserir Novo Filho!");
                 return BMH_FLAG; 
             }
@@ -350,7 +358,7 @@ static BmhStatus caso_no_possua_1_filho_insercao_ordenada (
         }
 
         else { // Caso Dado Deve Ser Inserido Na Mesma Direção Deve-se Balancear
-            if (criar_no_filho_para_no(&prox_no, dado, t_dado, metodo_comparacao) == BMH_OK) {
+            if (criar_no_filho_para_no(&prox_no, dado, t_dado, metodo_comparacao, metodo_destruicao) == BMH_OK) {
                 if (balancear_no(ptr_no, metodo_comparacao) == BMH_OK) { //Caso Consiga Balancear Nó
                     bmh_log_sucesso("Caso Nó Possua 1 Filho Inserção Ordenada: Sucesso Ao Balancear!");
                     return BMH_FLAG; //Retorna Flag
@@ -382,14 +390,14 @@ static BmhStatus caso_no_possua_1_filho_insercao_ordenada (
 
         if (metodo_comparacao(dado, (*ptr_no)->dado) > 0) { /*Caso Dado Seja Maior E 
         Exista Apenas Filho Na Esquerda*/
-            if (criar_no_filho_para_no(ptr_no, dado, t_dado, metodo_comparacao) == BMH_OK) {
+            if (criar_no_filho_para_no(ptr_no, dado, t_dado, metodo_comparacao, metodo_destruicao) == BMH_OK) {
                 bmh_log_sucesso("Caso Nó Possua 1 Filho Inserção Ordenada: Sucesso Ao Inserir Novo Filho!");
                 return BMH_FLAG; 
             }
         }
 
         else { // Caso Dado Deve Ser Inserido Na Mesma Direção Deve-se Balancear
-            if (criar_no_filho_para_no(&prox_no, dado, t_dado, metodo_comparacao) == BMH_OK) {
+            if (criar_no_filho_para_no(&prox_no, dado, t_dado, metodo_comparacao, metodo_destruicao) == BMH_OK) {
                 if (balancear_no(ptr_no, metodo_comparacao) == BMH_OK) { //Caso Consiga Balancear Nó
                     bmh_log_sucesso("Caso Nó Possua 1 Filho Inserção Ordenada: Sucesso Ao Balancear!");
                     return BMH_FLAG; //Retorna Flag
@@ -428,7 +436,8 @@ static BmhStatus caso_no_possua_1_filho_insercao_ordenada (
 static BmhStatus metodo_insercao_ordenada_balanceada(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
-    BmhComparador metodo_comparacao //Método Para Comparar Os Dados
+    BmhComparador metodo_comparacao, //Método Para Comparar Os Dados
+    BmhDestruidor metodo_destruicao //Método Para Destruir Os Dados
 ) //Compara Dados 
 {
     BmhNoArvore *no_atual = NULL; //Nó Usado Para Referência Ao Navegar Na Árvore
@@ -465,7 +474,7 @@ static BmhStatus metodo_insercao_ordenada_balanceada(
     while (true) {
         if (no_atual->qtd_filhos == 0) { //Caso Nó Não Possua Filhos
             if (criar_no_filho_para_no(&no_atual, dado, (*ptr_arvore)->t_dados,
-            metodo_comparacao) != BMH_OK) { //Tenta Criar Nó Filho E Verifica
+            metodo_comparacao, metodo_destruicao) != BMH_OK) { //Tenta Criar Nó Filho E Verifica
                 bmh_log_fracasso("Método Inserção Ordenada Balanceada: Erro Em Criar Nó Filho Para Nó!");
                 return BMH_ERRO; //Retorna Erro
             }
@@ -474,7 +483,7 @@ static BmhStatus metodo_insercao_ordenada_balanceada(
 
         else if (no_atual->qtd_filhos == 1) { //Caso Possua Um Filho
             if (caso_no_possua_1_filho_insercao_ordenada(&no_atual,
-            dado, (*ptr_arvore)->t_dados, metodo_comparacao) == BMH_FLAG) {
+            dado, (*ptr_arvore)->t_dados, metodo_comparacao, metodo_destruicao) == BMH_FLAG) {
                 break; //Sai Do Loop Caso Consiga Inserir
             }
 
@@ -499,7 +508,8 @@ static BmhStatus metodo_insercao_ordenada_balanceada(
 BmhStatus insercao_ordenada_balanceada_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
-    BmhComparador metodo_comparacao //Método Para Comparar Os Dados
+    BmhComparador metodo_comparacao, //Método Para Comparar Os Dados
+    BmhDestruidor metodo_destruicao //Método Que Destrói Dados 
 ) //Insere Dado De Forma Que A Árvore Fique Balanceada
 {
     if (ptr_arvore == NULL) { //Verifica Se Ponteiro Passado Existe
@@ -534,7 +544,7 @@ BmhStatus insercao_ordenada_balanceada_bmh_arvore(
     }
     
     else { //Caso Já Tenha Criado
-        if (metodo_insercao_ordenada_balanceada(ptr_arvore, dado, metodo_comparacao) != BMH_OK) {
+        if (metodo_insercao_ordenada_balanceada(ptr_arvore, dado, metodo_comparacao, metodo_destruicao) != BMH_OK) {
             bmh_log_fracasso("Inserção Ordenada Balanceada Bmh Árvore: Erro Ao Inserir Dado!");
             return BMH_ERRO;
         }
@@ -550,7 +560,8 @@ BmhStatus insercao_ordenada_balanceada_bmh_arvore(
 BmhStatus insercao_ordenada_bmh_arvore(
     BmhArvore **ptr_arvore, //Ponteiro Para Árvore Destino
     BmhPonteiroQualquer dado, //Dado Que Irá Ser Armazenado
-    BmhComparador metodo_comparacao //Método Para Comparar Os Dado
+    BmhComparador metodo_comparacao, //Método Para Comparar Os Dado
+    BmhDestruidor metodo_destruicao //Método Que Destrói Dados
 ) //Insere Dado De Forma Ordenada, Mas Não Balanceia Árvore
 {
     BmhNoArvore *no_atual = NULL; //Variável Auxiliar Para Navegar Na Árore
@@ -601,7 +612,7 @@ BmhStatus insercao_ordenada_bmh_arvore(
             if (metodo_comparacao(dado, no_atual->dado) > 0) { //Se Dado É Maior Que Dado Do Nó
                 if (no_atual->filho_dir == NULL) { //Caso Não Exista Filho Que Tenha Dado Maior
                     if (criar_no_filho_para_no(&no_atual, dado, (*ptr_arvore)->t_dados,
-                    metodo_comparacao) == BMH_OK) { //Tenta Criar Filho Para Nó Atual
+                    metodo_comparacao, metodo_destruicao) == BMH_OK) { //Tenta Criar Filho Para Nó Atual
                         (*ptr_arvore)->qtd_nos++; //Conta Mais Um Nó
                         bmh_log_sucesso("Inserção Ordenada Bmh Árvore: Sucesso Ao Criar Nó Filho Para Nó Atual!");
                         return BMH_OK;
@@ -618,7 +629,7 @@ BmhStatus insercao_ordenada_bmh_arvore(
             else {
                 if (no_atual->filho_esq == NULL) { //Caso Não Exista Filho Que Tenha Dado Menor
                     if (criar_no_filho_para_no(&no_atual, dado, (*ptr_arvore)->t_dados,
-                    metodo_comparacao) == BMH_OK) { //Tenta Criar Filho Para Nó Atual
+                    metodo_comparacao, metodo_destruicao) == BMH_OK) { //Tenta Criar Filho Para Nó Atual
                         (*ptr_arvore)->qtd_nos++; //Conta Mais Um Nó
                         bmh_log_sucesso("Inserção Ordenada Bmh Árvore: Sucesso Ao Criar Nó Filho Para Nó Atual!");
                         return BMH_OK;
