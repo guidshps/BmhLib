@@ -51,4 +51,10 @@ BmhNoArvore *buscar_dado_bmh_arvore(
     BmhComparador metodo_comparacao //Metódo Para Comparar Dados
 ); //Busca Dado Na Árvore E Devolve Nó Que Foi Achado
 
+BmhStatus deletar_dado_bmh_arvore (
+    BmhArvore **ptr_arvore, //Ponteiro Para Árvore Dado Que Será Deletado
+    BmhPonteiroQualquer dado, //Dado Que Irá Ser Deletado
+    BmhComparador metodo_comparacao //Método Para Comparação Dos Dados
+); //Deleta O Dado Que É Indicado Pelo Usuário
+
 #endif
