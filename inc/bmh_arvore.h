@@ -9,7 +9,7 @@ typedef struct BmhNoArvore {
     struct BmhNoArvore *filho_esq; //Filho Onde Fica Elemento Menor
     struct BmhNoArvore *filho_dir; //Filho Onde Fica Elemento Maior
     unsigned int qtd_filhos; //Quantidade De Filhos Que Nó Possui
-} BmhNoArvore;
+} BmhNoArvore; //Nó Da Árvore Binária
 
 typedef struct BmhArvore {
     struct BmhNoArvore *no_raiz; //Nó Raiz Da Árvore
