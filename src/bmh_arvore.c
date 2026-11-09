@@ -290,7 +290,7 @@ static BmhStatus criar_no_filho_para_no(
         (*ptr_no)->filho_dir = no_criado; //Nó Filho Direito Recebe Nó Criado
         (*ptr_no)->qtd_filhos++; //Conta Filho Já Que Adicionou Nó
     }
-    else if (metodo_comparacao(dado, (*ptr_no)->dado) < 0 && (*ptr_no)->filho_esq == NULL) {
+    else if (metodo_comparacao(dado, (*ptr_no)->dado) <= 0 && (*ptr_no)->filho_esq == NULL) {
     //Caso Dado Seja Menor E Não Exista Filho Na Esquerda
         (*ptr_no)->filho_esq = no_criado; //Nó Filho Esquerdo Recebe Nó Criado
         (*ptr_no)->qtd_filhos++; //Conta Filho Já Que Adicionou Nó
@@ -603,6 +603,7 @@ BmhStatus insercao_ordenada_bmh_arvore(
                 if (no_atual->filho_dir == NULL) { //Caso Não Exista Filho Que Tenha Dado Maior
                     if (criar_no_filho_para_no(&no_atual, dado, (*ptr_arvore)->t_dados,
                     metodo_comparacao) == BMH_OK) { //Tenta Criar Filho Para Nó Atual
+                        (*ptr_arvore)->qtd_nos++; //Conta Mais Um Nó
                         bmh_log_sucesso("Inserção Ordenada Bmh Árvore: Sucesso Ao Criar Nó Filho Para Nó Atual!");
                         return BMH_OK;
                     }
@@ -619,6 +620,7 @@ BmhStatus insercao_ordenada_bmh_arvore(
                 if (no_atual->filho_esq == NULL) { //Caso Não Exista Filho Que Tenha Dado Menor
                     if (criar_no_filho_para_no(&no_atual, dado, (*ptr_arvore)->t_dados,
                     metodo_comparacao) == BMH_OK) { //Tenta Criar Filho Para Nó Atual
+                        (*ptr_arvore)->qtd_nos++; //Conta Mais Um Nó
                         bmh_log_sucesso("Inserção Ordenada Bmh Árvore: Sucesso Ao Criar Nó Filho Para Nó Atual!");
                         return BMH_OK;
                     }
