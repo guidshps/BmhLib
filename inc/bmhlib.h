@@ -3,7 +3,10 @@
 #pragma once
 
 #include "bmh_commun.h"
+#include "bmh_array.h"
+#include "bmh_binary_tree.h"
 #include "bmh_linked_list.h"
+#include "bmh_list.h"
 #include "bmh_node.h"
 
 #endif

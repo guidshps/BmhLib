@@ -2,7 +2,6 @@
 #define COMUM_BMH_H
 #pragma once
 
-//Cores Para Impressão No Terminal
 #define BMH_RED "\033[31m"
 #define BMH_GREEN "\033[32m"
 #define BMH_YELLOW "\033[33m"
@@ -39,8 +38,8 @@
 
 /**
  * enum bmh_structures_status - Status from the data structures
- * @BMH_STRUCTURE_OK: Indicate the structure is ok and can be used
- * @BMH_STRUCTURE_CORRUPTED: Indicate the structure is corrupted and can
+ * @BMH_STRUCTURE_OK: Indicate if the structure is ok and can be used
+ * @BMH_STRUCTURE_CORRUPTED: Indicate if the structure is corrupted and can
  * not be used
  * @BMH_STRUCTURE_NOT_STARTED: Indicate that structure has not started yet.
  */
@@ -58,6 +57,7 @@ enum bmh_structures_status {
  * that exist
  * @BMH_STATUS_STRUCTURE_DOESNT_EXIST: Indicate that method has find an 
  * structure that does not exist 
+ * BMH_STATUS_PARAMETER_IS_INVALID: Indicate that parameter is invalid
  * @BMH_STATUS_ERROR_WHEN_ALLOCATE_MEMORRY: Indicate when the method has an
  * error when allocate memory
  */
@@ -66,6 +66,7 @@ enum bmh_status {
     BMH_STATUS_FAILED,
     BMH_STATUS_STRUCTURE_EXIST,
     BMH_STATUS_STRUCTURE_DOESNT_EXIST,
+    BMH_STATUS_PARAMETER_IS_INVALID,
     BMH_STATUS_ERROR_WHEN_ALLOCATE_MEMORRY,
 };
 
@@ -78,5 +79,30 @@ struct bmh_data {
     void *ptr;
     size_t size;
 };
+
+/**
+ * typedef bmh_comparison - Function that compares two datas
+ * 
+ * It compares the first data in relation to the second dat If the first data
+ * is bigger than the second, the result will be bigger than zero and if the
+ * second data is bigger than the first data the result will be smaller than zero
+ */
+typedef int(bmh_comparison)(void *, void *);
+
+/**
+ * typedef bmh_destroyer - Function that clean the data of an pointer
+ * 
+ * It destroy a pointer from an specific data type, used for generalize any
+ * function that to clean some data that are not used
+ */
+typedef enum bmh_status(bmh_destroyer)(void *);
+
+/**
+ * typedef bmh_byte - Represents an single byte
+ */
+typedef unsigned char bmh_byte;
+
+enum bmh_status create_bmh_data(struct bmh_data *dest, void *src, size_t d_size);
+enum bmh_status destroy_bmh_data(struct bmh_data *dest, bmh_destroyer data_destroyer);
 
 #endif

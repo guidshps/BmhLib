@@ -24,14 +24,9 @@ struct bmh_linked_list_node {
 struct bmh_linked_list {
     struct bmh_node *i_node;
     struct bmh_node *f_node; 
-    size_t len; 
-    size_t data_size;
     enum bmh_structures_status status;
+    u_int32_t len; 
+    size_t data_size;
 };
-
-enum bmh_status create_bmh_linked_list(struct bmh_linked_list **ptr_l_list, 
-                     size_t data_size);
-enum bmh_status append_data_bmh_linked_list(struct bmh_linked_list **ptr_l_list,
-                        size_t data_size);
 
 #endif
